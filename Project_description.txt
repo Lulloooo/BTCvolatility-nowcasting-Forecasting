@@ -1,0 +1,78 @@
+
+CRYPTO VOLATILITY PREDICTION USING ML
+
+INDEX
+- description
+- data sources 
+- files
+- target variable explanation
+- Modeling Procedure
+- Models' set
+- Evaluation metrics
+
+
+
+DESCRIPTION
+This project predicts cryptocurrency volatility using Bitcoin price data, the Fear & Greed Index, and Google Trends data. The pipeline includes data fetching, preprocessing, merging, and model development — designed to run locally and scale on AWS.
+-> TARGET VARIABLE: Exponentially Weighted Moving Average (EWMA) Volatility.
+
+
+DATA SOURCES
+- Binance API (BTC/USDT historical prices)
+- Alternative.me API (Fear & Greed Index)
+- Google Trends (via PyTrends)
+
+
+FILES
+File			Description
+BTC_USDT_binance.csv	Raw BTC price data
+fear_greed_index.csv	Raw sentiment data
+google_trends.csv	Raw search trend data
+fearGreed_final.csv	Final merged dataset
+merging_data.py		Script to merge & align datasets
+fetch_fear_greed.py	Script to collect sentiment data
+
+
+TARGET VARIABLE EXPLANATION - EWMA vs n-days rolling std volatility
+When forecasting financial volatility, the literature typically considers two common proxies:
+	- N-day Rolling Standard Deviation: Computes the standard deviation of returns over a fixed window of n days, assigning equal weight to all observations in the window.
+	- Exponentially Weighted Moving Average (EWMA) Volatility: Calculates volatility using exponentially decaying weights, giving more importance to recent returns while still accounting for older data.
+In this case study, the goal is to predict Bitcoin’s future volatility. Given that crypto markets are known for their extreme and fast-moving volatility, two key considerations arise:
+	- Recent market behavior tends to be more informative than older, more distant observations.
+	- Excessive noise in the volatility series can harm model performance, especially for machine learning models that benefit from smoother target signals.
+These observations suggest that EWMA volatility is better suited as the target variable. It excels at:
+	- Smoothing the volatility signal (reducing noise).
+	- Prioritizing recent trends through decaying weights.
+Therefore, the 5-day EWMA volatility is selected as the target. A span=5 gives approximately 33% weight to the most recent return, ensuring responsiveness to market shifts while still retaining some memory of past movements.
+Note. For completeness, the same forecasting analysis was also conducted using 5-day, 21-day, and 30-day rolling standard deviation volatility as targets. All resulted in significantly weaker model performance, further validating the choice of EWMA. 
+
+
+MODELING PROCEDURE
+Through this analysis, several different models are implemented in order to choose a final top-performing model. In details, the procedure will go as follows:  
+	- Choose a set of model to implement. This choice is flexible, and additional models can be introduced at any stage.  
+	- Perform Light tuning and fit (with TimeSeriesSplit validation to keep temporal-ordering during validation) each model on the training dataset (X_scal_tr and y_scal_tr). Light-tuning uses a narrow hyperparameter grid to save computational resources and time.
+	- Evaluate each model on the validation set (X-val_scal and y_val_scal) using consistent scoring metrics (named scoring).
+	- Select the top 2-3 performing models based on evaluation metrics. 
+	- Fine-tune the top performing models on the training set. This is done with a broader hyper-parameters grid.
+	- Re-evaluate the top models on the validation set. 
+	- Choose the overall top-performing model. This is the “champion” model.
+	- Evaluate this model on the unseen dataset, i.e the testing set (X_scal_tt, y_scal_tt), using the same metrics as before.
+	- If performance is satisfactory, prepare the model for deployment (including discussion of limitations and interpretability). If not, revisit feature engineering or model selection.
+Note. Feature importance (or SHAP) may be explored on the top-performing models to support interpretability.  
+
+
+MODELS' SET
+For the analysis' purposes, the models taken into consideration are:  
+	- Linear Regression
+	- Ridge/Lasso regression
+	- Random Forest
+	- XGboost
+	- LightGBM
+	- Support Vector Regression (SVR)
+	- Long-short term memory (LSTM)   
+NOTE. only the top 2-3 performing models will receive more in-depth tuning.
+
+
+EVALUATION METRICS
+
+

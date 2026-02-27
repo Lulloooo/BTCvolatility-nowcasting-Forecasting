@@ -1,0 +1,10 @@
+ccxt
+pandas==2.2.3
+numpy==1.26.4
+scikit-learn==1.6.1
+joblib==1.5.1
+requests
+pytrends
+gradio
+xgboost==2.1.4
+ngboost==0.5.8
