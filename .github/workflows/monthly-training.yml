@@ -42,7 +42,7 @@ jobs:
           git add data/training_data/y_training.csv
           git add models/kmeans_model_updated.joblib
           git add models/xgb_volatility_model_updated.joblib
-          git add models/Forecast_ngb_volatility_model.joblib
+          git add models/Forecast_ngb_volatility_model_updated.joblib
           git add models/Forecast_ngb_volatility_model_updated.joblib
           git commit -m "Monthly deployed model re-training" || echo "No changes"
           git push "https://${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git" HEAD:main
