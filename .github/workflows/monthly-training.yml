@@ -1,4 +1,4 @@
-name: Daily OHLCV data backup
+name: Monthly deployed model re-training
 
 on:
   schedule:
