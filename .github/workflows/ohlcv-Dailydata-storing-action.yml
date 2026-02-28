@@ -1,1 +1,41 @@
+name: Daily OHLCV data backup
 
+on:
+  schedule:
+    - cron: "0 2 * * *" # Runs every day at 02:00 UTC
+  workflow_dispatch:      # Manual trigger
+
+jobs:
+  backup-btc-data:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1️⃣ Checkout code
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # 2️⃣ Set up Python
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.10"
+
+      # 3️⃣ Install dependencies
+      - name: Install dependencies
+        run: |
+          pip install --upgrade pip
+          pip install pandas requests
+
+      # 4️⃣ Run backup script
+      - name: Backup CoinGecko OHLCV
+        run: |
+          python BTCvolatility-nowcasting-Forecasting/data-storing-pipeline/ohlcv-data-daily-storing.py
+
+      # 5️⃣ Commit & push
+      - name: Commit updated CSV
+        run: |
+          git config user.name "github-actions"
+          git config user.email "github-actions@github.com"
+          git add BTCvolatility-nowcasting-Forecasting/data/ohlcv-data-daily-storing/ohlcv-daily-storing.csv
+          git commit -m "Daily BTC OHLCV backup" || echo "No changes"
+          git push "https://${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git" HEAD:main
