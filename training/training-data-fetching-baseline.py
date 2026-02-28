@@ -215,7 +215,7 @@ def compute_volatility(df):
 ############ EXECUTIONS
 ##### BASELINE DF LOADING
 ##load not-enginerred df
-X_start = pd.read_csv(data_dir/ "df_upToDate.csv", 
+X_start = pd.read_csv(base_dir / "data"/ "crypto_volatility_clean.csv", 
                       parse_dates = ["date"])
 #sort by date
 X_start = X_start.sort_values("date")
