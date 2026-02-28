@@ -36,6 +36,6 @@ jobs:
         run: |
           git config user.name "github-actions"
           git config user.email "github-actions@github.com"
-          git add data/ohlcv-data-daily-storing/ohlcv-daily-storing.csv
+          git add data/ohlcv-data-daily-storing/ohclv-daily-storing.csv
           git commit -m "Daily BTC OHLCV backup" || echo "No changes"
           git push "https://${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git" HEAD:main
