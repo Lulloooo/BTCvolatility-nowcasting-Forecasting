@@ -273,8 +273,6 @@ column_order = [
 ]
 #change the order in the new df
 X_full = X_full[column_order]
-#set the index as date
-X_full.index.name = "date"
 #Save the updated datase
 X_full.to_csv(data_dir/ "df_upToDate.csv")
 
