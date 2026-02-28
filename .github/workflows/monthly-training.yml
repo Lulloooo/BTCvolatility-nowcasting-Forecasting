@@ -1,0 +1,48 @@
+name: Monthly deployed model re-training
+
+on:
+  schedule:
+    - cron: "0 7 28 * *" # Runs at 07:00, on day 28 of the month
+  workflow_dispatch:      # Manual trigger
+
+jobs:
+  backup-btc-data:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1️⃣ Checkout code
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # 2️⃣ Set up Python
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.10"
+
+      # 3️⃣ Install dependencies
+      - name: Install dependencies
+        run: |
+          pip install --upgrade pip
+          pip install pandas requests numpy joblib scikit-learn pytrends xgboost ngboost
+
+      # 4️⃣ Run backup script
+      - name: Monthly re-training
+        run: |
+          python training/training-data-fetching.py
+          python training/train.py
+
+      # 5️⃣ Commit & push
+      - name: Commit updated CSV
+        run: |
+          git config user.name "github-actions"
+          git config user.email "github-actions@github.com"
+          git add data/training_data/df_upToDate.csv
+          git add data/training_data/x_training.csv
+          git add data/training_data/y_training.csv
+          git add models/kmeans_model_updated.joblib
+          git add models/xgb_volatility_model_updated.joblib
+          git add models/Forecast_ngb_volatility_model_updated.joblib
+          git add models/Forecast_ngb_volatility_model_updated.joblib
+          git commit -m "Monthly deployed model re-training" || echo "No changes"
+          git push "https://${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git" HEAD:main
