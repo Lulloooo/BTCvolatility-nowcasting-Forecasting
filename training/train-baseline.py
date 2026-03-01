@@ -16,6 +16,7 @@ import requests
 from datetime import datetime, timezone
 from pathlib import Path
 import joblib
+
 # ML
 from xgboost import XGBRegressor
 from ngboost import NGBRegressor
@@ -52,12 +53,12 @@ def training_and_updating():
     ###### NOWCASTING 
     ### MODEL LOADING
     #load XGBoost artifact & model & features
-    xgb_artifact = joblib.load(model_dir/ "xgb_volatility_model_updated.joblib")
+    xgb_artifact = joblib.load(baseline_model_dir/ "xgb_volatility_model.joblib")
     xgb_model = xgb_artifact["model"]
     xgb_features = xgb_artifact["feature_names"]
     xgb_params = xgb_artifact["params"]
     #load NGboost for interval Nowcasting
-    ngb_artifact = joblib.load(model_dir/ "ngb_volatility_model_updated.joblib")
+    ngb_artifact = joblib.load(baseline_model_dir/ "ngb_volatility_model.joblib")
     ngb_model = ngb_artifact["model"]
     ngb_features = ngb_artifact["feature_names"]
     ngb_params = ngb_artifact["params"]
@@ -96,7 +97,7 @@ def training_and_updating():
 
     ###### FORECASTING
     ### MODEL LOADING
-    forecast_ngb_artifact = joblib.load(model_dir/ "Forecast_ngb_volatility_model_updated.joblib")
+    forecast_ngb_artifact = joblib.load(baseline_model_dir/ "Forecast_ngb_volatility_model.joblib")
     forecast_ngb_model = forecast_ngb_artifact["model"]
     forecast_ngb_features = forecast_ngb_artifact["feature_names"]
     forecast_ngb_params = forecast_ngb_artifact["params"]
