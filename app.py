@@ -8,24 +8,35 @@ from pytrends.request import TrendReq
 import joblib
 import gradio as gr
 from sklearn.preprocessing import StandardScaler
+from huggingface_hub import hf_hub_download
 
 
-################### MODEL LOADING
-# Load XGBoost and NGBoost
-xgb_artifact = joblib.load("models/xgb_volatility_model_updated.joblib")
+################### MODEL LOADING FROM HF MODEL REPO
+#define HF's repo path
+HF_repo_id = "Lullooo/BTC-volatility-forecasting-model"
+#define a function to load models from HF
+def load_artifact(filename):
+    file_path = hf_hub_download(
+        repo_id=HF_repo_id,
+        filename=filename,
+        repo_type="model"
+    )
+    return joblib.load(file_path)
+# Load XGBoost
+xgb_artifact = load_artifact("xgb_volatility_model_updated.joblib")
 xgb_model = xgb_artifact["model"]
 xgb_features = xgb_artifact["feature_names"]
-
-ngb_artifact = joblib.load("models/ngb_volatility_model_updated.joblib")
+# nowcasting NGBoost
+ngb_artifact = load_artifact("ngb_volatility_model_updated.joblib")
 ngb_model = ngb_artifact["model"]
 ngb_features = ngb_artifact["feature_names"]
-
-forecast_ngb_artifact = joblib.load("models/Forecast_ngb_volatility_model_updated.joblib")
+# forecasting NGboost
+forecast_ngb_artifact = load_artifact("Forecast_ngb_volatility_model_updated.joblib")
 forecast_ngb_model = forecast_ngb_artifact["model"]
 forecast_ngb_features = forecast_ngb_artifact["feature_names"]
 
 # Load KMeans + scaler
-kmeans_artifact = joblib.load("models/kmeans_model_updated.joblib")
+kmeans_artifact = load_artifact("kmeans_model_updated.joblib")
 kmeans_model = kmeans_artifact["model"]
 cluster_scaler = kmeans_artifact["scaler"]
 # Only use the features that were actually used during training
@@ -137,7 +148,8 @@ def predict_volatility(date):
 
 
     # ---------------- NOWCASTING ----------------
-    X_xgb = df.iloc[-1:][xgb_features]
+    X_xgb = df.iloc[-1:][xgb_model.get_booster().feature_names]
+    #X_xgb = df.iloc[-1:][xgb_features]
     X_ngb = df.iloc[-1:][ngb_features]
 
     point = xgb_model.predict(X_xgb)[0]
