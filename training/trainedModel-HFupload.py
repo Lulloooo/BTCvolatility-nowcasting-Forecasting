@@ -6,7 +6,7 @@ repo_id = "Lullooo/BTC-volatility-forecasting-model"
 login(token=os.environ["HF_TOKEN"])
 
 upload_folder(
-    folder_path="model_output",
+    folder_path="models",
     repo_id=repo_id,
     repo_type="model",
 )
