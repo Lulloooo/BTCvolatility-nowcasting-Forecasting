@@ -1,4 +1,4 @@
-name: Monthly deployed model re-training
+name: Monthly deployed model re-training and uploading on HF
 
 on:
   schedule:
@@ -6,7 +6,7 @@ on:
   workflow_dispatch:      # Manual trigger
 
 jobs:
-  backup-btc-data:
+  retrain-and-HFdeployment:
     runs-on: ubuntu-latest
 
     steps:
@@ -24,13 +24,21 @@ jobs:
       - name: Install dependencies
         run: |
           pip install --upgrade pip
-          pip install pandas requests numpy joblib scikit-learn pytrends xgboost ngboost
+          pip install pandas requests numpy joblib scikit-learn pytrends xgboost ngboost huggingface_hub
 
-      # 4️⃣ Run backup script
+      # 4️⃣ Train and save the models
       - name: Monthly re-training
         run: |
+          set -e
           python training/training-data-fetching.py
           python training/train.py
+
+      # 5️⃣ Upload models to HF
+      - name: Upload model to Hugging Face
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        run: |
+          python trainedModel-HFupload.py
 
       # 5️⃣ Commit & push
       - name: Commit updated CSV
@@ -42,7 +50,7 @@ jobs:
           git add data/training_data/y_training.csv
           git add models/kmeans_model_updated.joblib
           git add models/xgb_volatility_model_updated.joblib
-          git add models/Forecast_ngb_volatility_model_updated.joblib
+          git add models/ngb_volatility_model_updated.joblib
           git add models/Forecast_ngb_volatility_model_updated.joblib
           git commit -m "Monthly deployed model re-training" || echo "No changes"
           git push "https://${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git" HEAD:main
