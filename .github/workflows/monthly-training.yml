@@ -38,7 +38,7 @@ jobs:
         env:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
         run: |
-          python trainedModel-HFupload.py
+          python training/trainedModel-HFupload.py
 
       # 5️⃣ Commit & push
       - name: Commit updated CSV
