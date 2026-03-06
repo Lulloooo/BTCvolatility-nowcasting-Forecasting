@@ -9,6 +9,7 @@ INDEX
 - Modeling Procedure
 - Models' set
 - Evaluation metrics
+- Periodic re-training
 
 
 
@@ -106,3 +107,13 @@ Nevertheless, all three metrics will always be assessed together. Examining thei
 - **RMSE vs R-squared**: conflicting signals may point out to the need to inspect residuals and re-evaluate the feature set or model complexity.
 - **RMSE vs MAE**: RMSE is always >= MAE. The larger difference, the greater the variance in individual erros across the sample.
 
+PERIODIC RE-TRAINING
+To ensure top-tier performances, the model is automatically re-trained every 28th of the month. New data is continuously added through an expanding window logic. The re-training procedure is the following:
+	- Last month's data are fetched
+	- New data are added to the baseline data frame
+	- The K-means clustering model is re-trained and new clusters are assigned
+	- The updated df is engineered
+	- NGboost and Xgboost models are re-trained
+	- The models' latest versions are automatically pushed to HF with a training timestamp
+This pipeline allows the deployed models to be always up-to-date. 
+Moreover, on longer time horizon (6 to 12 months), in-depth data and model drift analysis is conducted. If drift exists, a manual-in-depth re-training and selection is carried out. The model is then updated.
