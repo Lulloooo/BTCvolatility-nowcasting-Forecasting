@@ -5,7 +5,7 @@
 ## 📄 MODEL's OUTLINE
 A detailed project and model description can be found in the [project_description 📁](https://github.com/Lulloooo/BTCvolatility-nowcasting-Forecasting/blob/main/Project_description.txt)  
 <br/>
-The model nowcasts (same-day) and forecasts (next-day) 5-days EWMA BTC/USDT volatility based on BTC price data (OHLCV), the daily fear & greed index and Google trend data for the word "Bitcoin". In details, the model provides two different estimations:
+The model nowcasts (same-day) and forecasts (next-day) 5-days EWMA BTC/USDT volatility based on BTC price data (OHLCV), the daily fear & greed index and Google trend data for the word "Bitcoin". In details, the model provides two different nowcasting and forecasting estimations:
 
 - 🎯 **Point prediction**: through an XGBoost model, it yields a precise estimation for BTC volatility. This is how most forecasting models behave.
 - 🔺🔻 **Interval predictions**: through a NGBoost model, it higlights the upper and lower bounds for BTC volatility with a 95% confidence interval by computing its probability distribution.
@@ -28,8 +28,12 @@ The model's functioning is quite easy: once the user inputs the date (YYYY-MM-DD
 - 4️⃣ Returns point and interval predictions for the same (t) and next (t+1) day EWMA Volatility.  
 
 ![BTCModel-example ](https://github.com/user-attachments/assets/e5cd5d47-aab4-4c64-867d-069ab2c08d13)
+<br/><br/>
 
-## 🚀 DEPLOYMENT & RE-TRAINING
-Model is deployed on Hugging Face 🤗 spaces.
-DEPLOYMENT (HF) & AUTOMATIC RE-TRAINING 
+## 🚀 DEPLOYMENT & RE-TRAINING  
+To keep model's perfromances top-tier, it undergos an automatic 🔁 *periodic re-training* 🔁 every 28th of the Month. Moreover, every 6 to 12 months data and model drift is inspected. If drift exists, a manual in-depth model tuning and selecting is performed.  
+The model is deployed on Hugging Face spaces 🤗
+<br/><br/>
+📩 Feel free to reach out with feedbacks and comments. They’re all very welcome  📩
+
 
