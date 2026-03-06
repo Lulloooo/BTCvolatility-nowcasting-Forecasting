@@ -3,6 +3,8 @@
 <br/>  
 
 ## 📄 MODEL's OUTLINE
+A detailed project and model description can be found in the [project_description 📁](https://github.com/Lulloooo/BTCvolatility-nowcasting-Forecasting/blob/main/Project_description.txt)  
+<br/>
 The model nowcasts (same-day) and forecasts (next-day) 5-days EWMA BTC/USDT volatility based on BTC price data (OHLCV), the daily fear & greed index and Google trend data for the word "Bitcoin". In details, the model provides two different estimations:
 
 - 🎯 **Point prediction**: through an XGBoost model, it yields a precise estimation for BTC volatility. This is how most forecasting models behave.
@@ -16,7 +18,7 @@ As the goal is to predict BTC's future volatility and crypto market are extremel
 - Excessive noise within the volatility series can harm model performance. This is particularly true for ML models benefitting from smoother target signals.
 
 These suggest that **a 5-days Exponentially Weighted Moving Average (EWMA) volatility** is a well-suited target variable, as it excels at *a)* smoothing volatility signal (i.e reducing noise); and *b)* prioritizing recent trends through decaying weights. Furthermore, a span = 5 gives approximately 33% weight to the most recent return, ensuring both responsiveness to market's shifts and memory of past movements.  
-Note. Rolling volatility with different span's values (5-days, 21-days, 30-days) has been tested too. However, all resulted in significantly weaker performances with respect to EMWA volatility.  
+*Note.* Rolling volatility with different span's values (5-days, 21-days, 30-days) has been tested too. However, all resulted in significantly weaker performances with respect to EMWA volatility.  
 
 ## ⚙️ HOW IT WORKS
 The model's functioning is quite easy: once the user inputs the date (YYYY-MM-DD format) of interest, the model:
@@ -27,6 +29,7 @@ The model's functioning is quite easy: once the user inputs the date (YYYY-MM-DD
 
 ![BTCModel-example ](https://github.com/user-attachments/assets/e5cd5d47-aab4-4c64-867d-069ab2c08d13)
 
-
+## 🚀 DEPLOYMENT & RE-TRAINING
+Model is deployed on Hugging Face 🤗 spaces.
 DEPLOYMENT (HF) & AUTOMATIC RE-TRAINING 
 
