@@ -13,24 +13,43 @@ INDEX
 
 
 DESCRIPTION
-This project predicts cryptocurrency volatility using Bitcoin price data, the Fear & Greed Index, and Google Trends data. The pipeline includes data fetching, preprocessing, merging, and model development — designed to run locally and scale on AWS.
+This project nowcast (same-day) and forecast (next-day) cryptocurrency volatility based on Bitcoin price data, the Fear & Greed Index, and Google Trends data. The project is structured in different pipelines:
+	- Data pipeline: data fetching, pre-processing, merging and cleaning.
+	- EDA & Feature engineering: exploring data distribution and summary statistics; builds new features from existing one, defines cluster through k-means and assess dimensionality reduction thanks to PCA. 
+	- Model tuning & selection: light-tuning of several different models (regression, tree-based, LSTM and transformers) and top-performing model assessment and selection.
+	- Model Deployment: by inputing the date, the model forecast volatility for today and tomorrow.
+	- Periodic Model re-training: The model(s) automatically re-train monthly based on an expanding window strategy. 
 -> TARGET VARIABLE: Exponentially Weighted Moving Average (EWMA) Volatility.
+-> MODEL DEPLOYMENT: model deployed on Hugging Face spaces.
 
 
 DATA SOURCES
-- Binance API (BTC/USDT historical prices)
+- Coingeko API (BTC/USD historical prices)
 - Alternative.me API (Fear & Greed Index)
 - Google Trends (via PyTrends)
 
+RAW FILES & FOLDER SCHEMA
+Folder		File				Description 
 
-FILES
-File			Description
-BTC_USDT_binance.csv	Raw BTC price data
-fear_greed_index.csv	Raw sentiment data
-google_trends.csv	Raw search trend data
-fearGreed_final.csv	Final merged dataset
-merging_data.py		Script to merge & align datasets
-fetch_fear_greed.py	Script to collect sentiment data
+		Data Dictionary			variables description
+		requirements			packages required for deployment
+		app.py				HF space app
+Data						Stores ALL data used
+Data-storing-pipeline
+		ohlcv-data-daily-storing	Daily parsing and backup of OHLCV data
+Notebooks					EDA & feature engineering
+Script						Data Fetching
+		BTC_USDT_binance.csv		Raw BTC price data
+		fear_greed_index.csv		Raw sentiment data
+		google_trends.csv		Raw search trend data
+		fearGreed_final.csv		Final merged dataset
+		merging_data.py			Script to merge & align datasets
+		fetch_fear_greed.py		Script to collect sentiment data
+
+Tuning-and-selection				Model(s) tuning and selection (
+Img						images folder
+Models						models stored (both baseline & deployed)
+training					Periodic re-training & upload to HF
 
 
 TARGET VARIABLE EXPLANATION - EWMA vs n-days rolling std volatility
@@ -47,7 +66,7 @@ Therefore, the 5-day EWMA volatility is selected as the target. A span=5 gives a
 Note. For completeness, the same forecasting analysis was also conducted using 5-day, 21-day, and 30-day rolling standard deviation volatility as targets. All resulted in significantly weaker model performance, further validating the choice of EWMA. 
 
 
-MODELING PROCEDURE
+MODELING TUNING & SELECTION PROCEDURE
 Through this analysis, several different models are implemented in order to choose a final top-performing model. In details, the procedure will go as follows:  
 	- Choose a set of model to implement. This choice is flexible, and additional models can be introduced at any stage.  
 	- Perform Light tuning and fit (with TimeSeriesSplit validation to keep temporal-ordering during validation) each model on the training dataset (X_scal_tr and y_scal_tr). Light-tuning uses a narrow hyperparameter grid to save computational resources and time.
@@ -74,5 +93,16 @@ NOTE. only the top 2-3 performing models will receive more in-depth tuning.
 
 
 EVALUATION METRICS
+Since this is a regression task, the evaluation metrics considered are: 
 
+- **Root mean Squared Error (RMSE)**: measures the average magnitude of the errors. It is scale-independent, making it suitable for model comparisons.
+- **Mean Absolute Error (MAE)**: captures the mean absolute difference between predictions and actuals values It shares the same unit as the target.
+- **R-squared**: shows the proportion of target's variance explained by the model.
+
+The main metric will be RMSE since it *a)* penalized larger errors more heavily; and *b)* is commonly used in models sensitive to significant prediction errors. Therefore, the model having the lowest RMSE will be considered the most-efficient.
+
+Nevertheless, all three metrics will always be assessed together. Examining their relationships can reveal potential issues. More in details:
+
+- **RMSE vs R-squared**: conflicting signals may point out to the need to inspect residuals and re-evaluate the feature set or model complexity.
+- **RMSE vs MAE**: RMSE is always >= MAE. The larger difference, the greater the variance in individual erros across the sample.
 
