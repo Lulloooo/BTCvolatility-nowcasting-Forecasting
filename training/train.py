@@ -61,17 +61,10 @@ def training_and_updating():
     ngb_model = ngb_artifact["model"]
     ngb_features = ngb_artifact["feature_names"]
     ngb_params = ngb_artifact["params"]
-  
     #remove deep params ngb nowcasting
     ngb_params = {
     k: v
     for k, v in ngb_params.items()
-    if "__" not in k
-    }
-    #remove deep params ngb forecasting
-    forecast_ngb_params = {
-    k: v
-    for k, v in forecast_ngb_params.items()
     if "__" not in k
     }
 
@@ -114,6 +107,12 @@ def training_and_updating():
     forecast_ngb_model = forecast_ngb_artifact["model"]
     forecast_ngb_features = forecast_ngb_artifact["feature_names"]
     forecast_ngb_params = forecast_ngb_artifact["params"]
+    #remove deep params ngb forecasting
+    forecast_ngb_params = {
+    k: v
+    for k, v in forecast_ngb_params.items()
+    if "__" not in k
+    }
     ### MODEL TRAINING
     print("🚀 Training Forecasting NGBoost...")
     forecast_ngb_model = NGBRegressor(**forecast_ngb_params)
