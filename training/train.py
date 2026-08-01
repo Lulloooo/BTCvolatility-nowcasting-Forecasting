@@ -62,20 +62,18 @@ def training_and_updating():
     ngb_features = ngb_artifact["feature_names"]
     ngb_params = ngb_artifact["params"]
   
-    ####debug
-    print(ngb_artifact["params"])
-    #remove deep params
+    #remove deep params ngb nowcasting
     ngb_params = {
     k: v
     for k, v in ngb_params.items()
     if "__" not in k
     }
-    #check it
-    print("Before filtering:")
-    print(sorted(ngb_artifact["params"].keys()))
-
-    print("After filtering:")
-    print(sorted(ngb_params.keys()))
+    #remove deep params ngb forecasting
+    forecast_ngb_params = {
+    k: v
+    for k, v in forecast_ngb_params.items()
+    if "__" not in k
+    }
 
     ### MODEL TRAINING
     #train xgboost
@@ -126,7 +124,7 @@ def training_and_updating():
             "model": forecast_ngb_model,
             "feature_names": forecast_ngb_features,
             "trained_at": datetime.now(timezone.utc).isoformat(),
-            "params": forecast_ngb_model.get_params()
+            "params": forecast_ngb_model.get_params(deep=False)
         },
         model_dir / "Forecast_ngb_volatility_model_updated.joblib"
     )
