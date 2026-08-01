@@ -61,8 +61,17 @@ def training_and_updating():
     ngb_model = ngb_artifact["model"]
     ngb_features = ngb_artifact["feature_names"]
     ngb_params = ngb_artifact["params"]
-    #debu
+  
+    ####debug
     print(ngb_artifact["params"])
+
+    #remove deep parameters
+    ngb_params = {
+    k: v
+    for k, v in ngb_params.items()
+    if "__" not in k
+    }
+  
     ### MODEL TRAINING
     #train xgboost
     print("🚀 Training Nowcgasting XGBoost...")
@@ -91,7 +100,7 @@ def training_and_updating():
             "model": ngb_model,
             "feature_names": ngb_features,
             "trained_at": datetime.now(timezone.utc).isoformat(),
-            "params": ngb_model.get_params()
+            "params": ngb_model.get_params(deep=False)
         },
         model_dir / "ngb_volatility_model_updated.joblib"
     )
