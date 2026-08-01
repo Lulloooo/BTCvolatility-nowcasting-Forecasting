@@ -61,6 +61,8 @@ def training_and_updating():
     ngb_model = ngb_artifact["model"]
     ngb_features = ngb_artifact["feature_names"]
     ngb_params = ngb_artifact["params"]
+    #debu
+    print(ngb_artifact["params"])
     ### MODEL TRAINING
     #train xgboost
     print("🚀 Training Nowcgasting XGBoost...")
