@@ -64,14 +64,19 @@ def training_and_updating():
   
     ####debug
     print(ngb_artifact["params"])
-
-    #remove deep parameters
+    #remove deep params
     ngb_params = {
     k: v
     for k, v in ngb_params.items()
     if "__" not in k
     }
-  
+    #check it
+    print("Before filtering:")
+    print(sorted(ngb_artifact["params"].keys()))
+
+    print("After filtering:")
+    print(sorted(ngb_params.keys()))
+
     ### MODEL TRAINING
     #train xgboost
     print("🚀 Training Nowcgasting XGBoost...")
